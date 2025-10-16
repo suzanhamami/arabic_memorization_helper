@@ -9,14 +9,14 @@ import 'package:internship_project/presentation/transcription/bloc/transcription
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class TranscriptionPage extends StatefulWidget {
+  const TranscriptionPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<TranscriptionPage> createState() => _TranscriptionPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _TranscriptionPageState extends State<TranscriptionPage> {
   late AudioRecorder audioRecorder;
   late TextEditingController originalText;
   // late AudioPlayer audioPlayer;
