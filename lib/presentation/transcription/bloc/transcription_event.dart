@@ -4,6 +4,8 @@ part of 'transcription_bloc.dart';
 @immutable
 sealed class TranscriptionEvent {}
 
+class AudioRecorded extends TranscriptionEvent{}
+
 class AudioUploaded extends TranscriptionEvent {
   final File file;
   AudioUploaded({required this.file});

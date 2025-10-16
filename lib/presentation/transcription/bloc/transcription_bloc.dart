@@ -10,6 +10,7 @@ class TranscriptionBloc extends Bloc<TranscriptionEvent, TranscriptionState> {
   final TranscriptRepo transcriptRepo;
   TranscriptionBloc({required this.transcriptRepo})
     : super(TranscriptionInitial()) {
+    on<AudioRecorded>((event, emit) => emit(AudioRecording()));
     on<AudioUploaded>((event, emit) async {
       emit(AudioUploading());
       try {

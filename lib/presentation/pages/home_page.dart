@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:internship_project/core/resources/assets_manager.dart';
+import 'package:internship_project/presentation/pages/memorization_page.dart';
 import 'package:internship_project/presentation/transcription/transcription_page.dart';
 import 'package:internship_project/presentation/widgets/chapter_item.dart';
 
@@ -249,7 +250,7 @@ buildBottomSheet(BuildContext context) {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TranscriptionPage()),
+                  MaterialPageRoute(builder: (context) => MemorizationPage()),
                 );
               },
               icon: Padding(

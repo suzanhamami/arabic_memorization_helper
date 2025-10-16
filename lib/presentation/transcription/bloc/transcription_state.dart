@@ -8,6 +8,8 @@ final class TranscriptionInitial extends TranscriptionState {}
 
 final class AudioUploading extends TranscriptionState {}
 
+final class AudioRecording extends TranscriptionState {}
+
 class AudioUploadedSuccessfully extends TranscriptionState {
   final String response;
   AudioUploadedSuccessfully({required this.response});
@@ -15,9 +17,7 @@ class AudioUploadedSuccessfully extends TranscriptionState {
 
 class TranscriptionError extends TranscriptionState {
   final String message;
-  TranscriptionError({
-    required this.message,
-  });
+  TranscriptionError({required this.message});
 }
 
 class TranscriptionLoading extends TranscriptionState {
