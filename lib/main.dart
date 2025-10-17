@@ -9,7 +9,6 @@ import 'package:internship_project/presentation/pages/home_page.dart';
 import 'package:internship_project/presentation/pages/memorization_page.dart';
 import 'package:internship_project/presentation/transcription/bloc/transcription_bloc.dart';
 import 'package:internship_project/core/service_locator.dart';
-import 'package:internship_project/presentation/transcription/transcription_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +40,7 @@ class MyApp extends StatelessWidget {
         // Use builder only if you need to use library outside ScreenUtilInit context
         builder: (_, child) {
           return MaterialApp(
-            home: MemorizationPage(),
+            home: HomePage(),
             debugShowCheckedModeBanner: false,
           );
         },

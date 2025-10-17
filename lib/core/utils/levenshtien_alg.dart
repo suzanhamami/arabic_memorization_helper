@@ -80,12 +80,12 @@ class LevenshtienAlg {
     required String originalText,
     required String userText,
   }) {
-    try {
-      validateArabicText(text: originalText);
-      validateArabicText(text: userText);
-    } catch (e) {
-      rethrow;
-    }
+    // try {
+    //   validateArabicText(text: originalText);
+    //   validateArabicText(text: userText);
+    // } catch (e) {
+    //   rethrow;
+    // }
 
     tokenize(originalText: originalText, userText: userText);
     wrongWords = [];
@@ -116,10 +116,10 @@ class LevenshtienAlg {
     List<WordEdit> ops = [];
     var i = n, j = m;
     while (i > 0 || j > 0) {
-      int current = dpMatrix[i][j];
-      int sub = dpMatrix[i - 1][j - 1] + 1;
-      int del = dpMatrix[i - 1][j] + 1;
-      int ins = dpMatrix[i][j - 1] + 1;
+      // int current = dpMatrix[i][j];
+      // int sub = dpMatrix[i - 1][j - 1] + 1;
+      // int del = dpMatrix[i - 1][j] + 1;
+      // int ins = dpMatrix[i][j - 1] + 1;
       if (i > 0 && j > 0 && originalTokens[i - 1] == userTokens[j - 1]) {
         ops.add(WordEdit(type: "match", from: originalTokens[i - 1]));
         correctWords++;
@@ -146,7 +146,7 @@ class LevenshtienAlg {
           j--;
         }
       } else if (j > 0 &&
-          (i == 0 || dpMatrix[i][j - 1] <= dpMatrix[i - 1][j])) {
+          (i == 0 || (i>0 && dpMatrix[i][j - 1] <= dpMatrix[i - 1][j]))) {
         ops.add(WordEdit(type: "insert", to: userTokens[j - 1]));
         wrongWords.add(userTokens[j - 1]);
         j--;
@@ -156,7 +156,15 @@ class LevenshtienAlg {
         i--;
       }
     }
-    // while (i > 0 || j > 0) {
+    wrongWords = wrongWords.reversed.toList();
+    print(ops);
+    print(dpMatrix);
+    print(wrongWords);
+    String score = "$correctWords/$n";
+    return ComparisonResultEntity(score: score, wrongWords: wrongWords);
+  }
+}
+// while (i > 0 || j > 0) {
     //   int current = dpMatrix[i][j];
     //   int sub = dpMatrix[i - 1][j - 1] + 1;
     //   int del = dpMatrix[i - 1][j] + 1;
@@ -188,11 +196,3 @@ class LevenshtienAlg {
     //     i--;
     //   }
     // }
-    wrongWords = wrongWords.reversed.toList();
-    print(ops);
-    print(dpMatrix);
-    print(wrongWords);
-    String score = "$correctWords/$n";
-    return ComparisonResultEntity(score: score, wrongWords: wrongWords);
-  }
-}

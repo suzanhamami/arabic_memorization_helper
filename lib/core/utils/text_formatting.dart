@@ -1,5 +1,71 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class TextFormatting {
+  final Set<String> englishFillerWords = {
+  //   // Hesitation sounds / simple fillers
+    "uh",
+    "um",
+    "ah",
+    "er",
+    "hm",
+    "hmm",
+    "mhm",
+    "mm",
+    "huh",
+
+    // Verbal crutches / hesitation phrases
+    "you know",
+    "i mean",
+    "like",
+    "sort of",
+    "kind of",
+    "actually",
+    "basically",
+    "literally",
+    "right",
+    "okay",
+    "okay so",
+    "okay then",
+
+    // Repeated discourse markers
+    "so",
+    "well",
+    "now",
+    "anyway",
+    "alright",
+    "oh",
+    "oh well",
+    "uh-huh",
+    "yeah",
+    "yes",
+    "no",
+
+    // Thinking / filler interjections
+    "err",
+    "hmm-m",
+
+    // // Self-corrections / stutters
+    // "i-i",
+    // "th-this",
+    // "s-so",
+    // "w-what",
+    // "c-could",
+    // "t-take",
+    // "m-maybe",
+
+    // // Overused conversational intensifiers
+    // "seriously",
+    // "totally",
+    // "completely",
+    // "really",
+    // "very",
+
+    // // Polite backchannels / listener cues
+    // "mm-hmm",
+    // "uh-huh",
+    // "got it",
+    // "sure",
+  };
+
   final Set<String> arabicFillerWords = {
     "يعني",
     "إيه",
@@ -38,12 +104,20 @@ class TextFormatting {
 
   String formatText(String text) {
     text = removeZeroWidth(text);
+    text = removeDiacritics(text);
     text = removeLigatures(text);
     text = removePunctuation(text);
     text = fixLetters(text);
     text = fixSpaces(text);
     text = removeFillerWords(text);
     return text;
+  }
+
+  String removeDiacritics(String text) {
+    return text.replaceAll(
+      RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]'),
+      '',
+    );
   }
 
   String removeZeroWidth(String text) {
@@ -77,72 +151,8 @@ class TextFormatting {
   String removeFillerWords(String text) {
     List<String> words = text.split(' ');
     words = words.where((word) => !arabicFillerWords.contains(word)).toList();
+    words = words.where((word) => !englishFillerWords.contains(word)).toList();
     return words.join(' ');
   }
 }
 
-// Set<String> fillerWords = {
-  //   // Hesitation sounds / simple fillers
-  //   "uh",
-  //   "um",
-  //   "ah",
-  //   "er",
-  //   "hm",
-  //   "hmm",
-  //   "mhm",
-  //   "mm",
-  //   "huh",
-
-  //   // Verbal crutches / hesitation phrases
-  //   "you know",
-  //   "i mean",
-  //   "like",
-  //   "sort of",
-  //   "kind of",
-  //   "actually",
-  //   "basically",
-  //   "literally",
-  //   "right",
-  //   "okay",
-  //   "okay so",
-  //   "okay then",
-
-  //   // Repeated discourse markers
-  //   "so",
-  //   "well",
-  //   "now",
-  //   "anyway",
-  //   "alright",
-  //   "oh",
-  //   "oh well",
-  //   "uh-huh",
-  //   "yeah",
-  //   "yes",
-  //   "no",
-
-  //   // Thinking / filler interjections
-  //   "err",
-  //   "hmm-m",
-
-  //   // // Self-corrections / stutters
-  //   // "i-i",
-  //   // "th-this",
-  //   // "s-so",
-  //   // "w-what",
-  //   // "c-could",
-  //   // "t-take",
-  //   // "m-maybe",
-
-  //   // // Overused conversational intensifiers
-  //   // "seriously",
-  //   // "totally",
-  //   // "completely",
-  //   // "really",
-  //   // "very",
-
-  //   // // Polite backchannels / listener cues
-  //   // "mm-hmm",
-  //   // "uh-huh",
-  //   // "got it",
-  //   // "sure",
-  // };

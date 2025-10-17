@@ -2,8 +2,10 @@
 class ComparisonResultEntity {
   String score;
   List<String> wrongWords;
-  ComparisonResultEntity({
-    required this.score,
-    required this.wrongWords,
-  });
+  ComparisonResultEntity({required this.score, required this.wrongWords});
+
+  @override
+  String toString() {
+    return "Your score is: $score and you made these mistakes: ${wrongWords.toString()}";
+  }
 }

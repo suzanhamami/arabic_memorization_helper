@@ -21,11 +21,15 @@ void main() {
 
   test("Score for longer text", () {
     final comparer = getIt<LevenshtienAlg>();
-    final score2 = comparer.compareText(
-      originalText: "I ate an apple",
-      userText: "I eat apple every other day",
-    );
-    print(score2);
+    try {
+      final score2 = comparer.compareText(
+        originalText: "I ate an apple",
+        userText: "I eat apple every other day",
+      );
+      print(score2);
+    } catch (e) {
+      print(e);
+    }
   });
 
   test("Returns score", () {

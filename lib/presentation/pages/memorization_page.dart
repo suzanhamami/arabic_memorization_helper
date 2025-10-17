@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:internship_project/core/resources/assets_manager.dart';
+import 'package:internship_project/domain/entity/transcript_entity.dart';
+import 'package:internship_project/presentation/comparison/bloc/comparison_bloc.dart';
 import 'package:internship_project/presentation/transcription/bloc/transcription_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -32,6 +34,9 @@ class _MemorizationPageState extends State<MemorizationPage> {
   late AudioRecorder audioRecorder;
   bool isRecording = false;
   String? recordPath;
+  TranscriptEntity originalText = TranscriptEntity(
+    text: "hello my name is susan.",
+  );
 
   @override
   void initState() {
@@ -57,7 +62,25 @@ class _MemorizationPageState extends State<MemorizationPage> {
           Expanded(
             child: MemorizationContainer(
               isRecording: isRecording,
-              child: BlocBuilder<TranscriptionBloc, TranscriptionState>(
+              child: BlocConsumer<TranscriptionBloc, TranscriptionState>(
+                listener: (context, state) {
+                  if (state is AudioRecording) {
+                    setState(() {
+                      isRecording = true;
+                    });
+                  } else if (state is AudioUploading) {
+                    setState(() {
+                      isRecording = false;
+                    });
+                  } else if (state is TranscriptionReady) {
+                    context.read<ComparisonBloc>().add(
+                      ComparisonRequested(
+                        originalText: originalText,
+                        userText: state.transcript,
+                      ),
+                    );
+                  }
+                },
                 builder: (context, state) {
                   switch (state) {
                     case AudioUploading() ||
@@ -99,7 +122,7 @@ class _MemorizationPageState extends State<MemorizationPage> {
                       );
                     default:
                       return Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum placeat tempora quo ullam quam eos consequatur sunt dolores magnam magni dicta aliquid eveniet blanditiis, rerum est maiores. Facilis dolore debitis nihil quis! Quam, vitae illo asperiores veniam, sunt odit quisquam voluptates veritatis quo numquam neque doloribus nulla, dolores similique unde.",
+                        originalText.text,
                         style: TextStyle(color: Colors.white, fontSize: 18.sp),
                       );
                   }
@@ -107,49 +130,81 @@ class _MemorizationPageState extends State<MemorizationPage> {
               ),
             ),
           ),
-          BottomAppBar(
-            padding: EdgeInsets.all(0),
-            color: Colors.transparent,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                // spacing: 30,
-                children: [
-                  Text(
-                    "الجهاز العصبي •",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Spacer(),
-                  // SizedBox(width: 33.w),
-                  InkWell(
-                    onTap: () async {
-                      await audioRecording();
-                      // isRecording ? isRecording = false : isRecording = true;
-                      setState(() {});
-                    },
-                    child: isRecording
-                        ? DecoratedRecordingButton()
-                        : RecordingButton(),
-                  ),
-                  Spacer(),
-                  // SizedBox(width: 33.w),
-                  Row(
-                    spacing: 16.w,
-                    children: [
-                      Icon(Icons.wb_sunny_rounded, color: Colors.white),
-                      Image.asset(AssetsManager.fontSize),
-                      Image.asset(
-                        AssetsManager.ear,
-                        color: isRecording ? Color(0x7EFFFFFF) : Colors.white,
+          BlocListener<ComparisonBloc, ComparisonState>(
+            listener: (BuildContext context, ComparisonState state) {
+              switch (state) {
+                case ComparisonError():
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        state.message,
+                        style: TextStyle(color: Colors.red),
                       ),
-                    ],
-                  ),
-                ],
+                      showCloseIcon: true,
+                      duration: Duration(seconds: 120),
+                    ),
+                  );
+                case ComparisonSuccess():
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        state.comparisonResultEntity.toString(),
+                        style: TextStyle(color: Colors.amber),
+                      ),
+                      showCloseIcon: true,
+                      duration: Duration(seconds: 120),
+                    ),
+                  );
+                default:
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: LinearProgressIndicator()));
+              }
+            },
+            child: BottomAppBar(
+              padding: EdgeInsets.all(0),
+              color: Colors.transparent,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  // spacing: 30,
+                  children: [
+                    Text(
+                      "الجهاز العصبي •",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Spacer(),
+                    // SizedBox(width: 33.w),
+                    InkWell(
+                      onTap: () async {
+                        await audioRecording();
+                        // isRecording ? isRecording = false : isRecording = true;
+                        // setState(() {});
+                      },
+                      child: isRecording
+                          ? DecoratedRecordingButton()
+                          : RecordingButton(),
+                    ),
+                    Spacer(),
+                    // SizedBox(width: 33.w),
+                    Row(
+                      spacing: 16.w,
+                      children: [
+                        Icon(Icons.wb_sunny_rounded, color: Colors.white),
+                        Image.asset(AssetsManager.fontSize),
+                        Image.asset(
+                          AssetsManager.ear,
+                          color: isRecording ? Color(0x7EFFFFFF) : Colors.white,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -169,7 +224,6 @@ class _MemorizationPageState extends State<MemorizationPage> {
               AudioUploaded(file: File(recordPath!)),
             );
           }
-          isRecording = false;
         }
       } catch (e, s) {
         print("from stop func");
@@ -181,9 +235,8 @@ class _MemorizationPageState extends State<MemorizationPage> {
         final String filePath =
             "${directory.path}/recording_${DateTime.now().millisecondsSinceEpoch}.m4a";
         try {
-          audioRecorder.start(const RecordConfig(), path: filePath);
+          await audioRecorder.start(const RecordConfig(), path: filePath);
           context.read<TranscriptionBloc>().add(AudioRecorded());
-          isRecording = true;
         } catch (e, s) {
           print("from start record func");
           print(s);
@@ -208,7 +261,7 @@ class MemorizationContainer extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(left: 21.w, right: 21.w, top: 10.h),
       // height: 584.h,
-      // width: 351.w,
+      width: 351.w,
       decoration: BoxDecoration(
         color: Color(0xFF242424),
         boxShadow: isRecording
@@ -245,30 +298,35 @@ class ProgressBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         // spacing: 28,
         children: [
-          Container(
-            alignment: Alignment.center,
-            height: 38.h,
-            width: 282.w,
-            decoration: BoxDecoration(
-              color: Color(0xFFF0FEAC),
-              borderRadius: BorderRadius.circular(50.r),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 14.w,
-              children: [
-                ...List.generate(
-                  typesOfQuestions.length,
-                  (index) => Image.asset(
-                    typesOfQuestions[index] == "key"
-                        ? AssetsManager.key
-                        : AssetsManager.circle,
+          Expanded(
+            child: Container(
+              alignment: Alignment.center,
+              height: 38.h,
+              // width: 282.w,
+              decoration: BoxDecoration(
+                color: Color(0xFFF0FEAC),
+                borderRadius: BorderRadius.circular(50.r),
+              ),
+              child: Row(
+                // alignment: WrapAlignment.spaceEvenly,
+                // mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 14.w,
+                children: [
+                  ...List.generate(
+                    typesOfQuestions.length,
+                    (index) => Image.asset(
+                      typesOfQuestions[index] == "key"
+                          ? AssetsManager.key
+                          : AssetsManager.circle,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          Spacer(),
+          SizedBox(width: 30.w),
+          // Spacer(),
           Icon(Icons.close, color: Colors.white, size: 31),
         ],
       ),

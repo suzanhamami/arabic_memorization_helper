@@ -76,13 +76,12 @@ flutter:
       - assets/images/chapter_1.jpg
       - assets/images/correct_icon.png
       - assets/images/lock_icon.png
-      - assets/images/Group 38-1.png
-      - assets/images/Group 8.png
+      - assets/images/background_path.png
       - assets/images/brainstorming.png
       - assets/images/shuffle.png
       - assets/images/key.png
       - assets/images/circle.png
-      - assets/images/Vector.png
+      - assets/images/record.png
       - assets/images/fontsize.png
       - assets/images/ear.png
   #   - images/a_dot_ham.jpeg
