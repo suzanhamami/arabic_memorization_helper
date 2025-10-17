@@ -35,6 +35,7 @@ class LevenshtienAlg {
   late List<String> userTokens;
   late List<String> wrongWords;
   int correctWords = 0;
+  String score="";
 
   void tokenize({required String originalText, required String userText}) {
     originalTokens = formatter.formatText(originalText).split(" ");
@@ -146,7 +147,7 @@ class LevenshtienAlg {
           j--;
         }
       } else if (j > 0 &&
-          (i == 0 || (i>0 && dpMatrix[i][j - 1] <= dpMatrix[i - 1][j]))) {
+          (i == 0 || (i > 0 && dpMatrix[i][j - 1] <= dpMatrix[i - 1][j]))) {
         ops.add(WordEdit(type: "insert", to: userTokens[j - 1]));
         wrongWords.add(userTokens[j - 1]);
         j--;
@@ -160,7 +161,7 @@ class LevenshtienAlg {
     print(ops);
     print(dpMatrix);
     print(wrongWords);
-    String score = "$correctWords/$n";
+     score = "$correctWords/$n";
     return ComparisonResultEntity(score: score, wrongWords: wrongWords);
   }
 }

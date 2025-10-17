@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internship_project/core/service_locator.dart';
+import 'package:internship_project/core/utils/levenshtien_alg.dart';
 import 'package:internship_project/domain/entity/comparison_result_entity.dart';
 import 'package:internship_project/domain/entity/transcript_entity.dart';
 import 'package:internship_project/domain/use_case/compare_texts.dart';
@@ -8,10 +10,10 @@ part 'comparison_event.dart';
 part 'comparison_state.dart';
 
 class ComparisonBloc extends Bloc<ComparisonEvent, ComparisonState> {
-  final CompareTextsUseCase compareTextsUseCase;
-  ComparisonBloc({required this.compareTextsUseCase})
+  ComparisonBloc()
     : super(ComparisonInitial()) {
     on<ComparisonRequested>((event, emit) {
+  final CompareTextsUseCase compareTextsUseCase = CompareTextsUseCase(comparer: getIt.get<LevenshtienAlg>());
       emit(ComparisonLoading());
       try {
         final comparisonResult = compareTextsUseCase.call(

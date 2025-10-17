@@ -23,7 +23,7 @@ Future<void> setUpLocator() async {
     ),
   );
   //usecase :
-  getIt.registerLazySingleton<CompareTextsUseCase>(
+  getIt.registerFactory<CompareTextsUseCase>(
     () => CompareTextsUseCase(comparer: getIt<LevenshtienAlg>()),
   );
   //bloc :
@@ -31,7 +31,7 @@ Future<void> setUpLocator() async {
     () => TranscriptionBloc(transcriptRepo: getIt<TranscriptRepo>()),
   );
   getIt.registerFactory<ComparisonBloc>(
-    () => ComparisonBloc(compareTextsUseCase: getIt<CompareTextsUseCase>()),
+    () => ComparisonBloc(),
   );
   //textFormatter :
   getIt.registerLazySingleton<TextFormatting>(() => TextFormatting());
