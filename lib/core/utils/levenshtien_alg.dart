@@ -31,15 +31,11 @@ class WordEdit {
 class LevenshtienAlg {
   final TextFormatting formatter;
   LevenshtienAlg({required this.formatter});
-  late List<String> originalTokens;
-  late List<String> userTokens;
-  late List<String> wrongWords;
-  int correctWords = 0;
-  String score="";
 
-  void tokenize({required String originalText, required String userText}) {
-    originalTokens = formatter.formatText(originalText).split(" ");
-    userTokens = formatter.formatText(userText).split(" ");
+  List<String> tokenize({required String text}) {
+    List<String> tokens = formatter.formatText(text).split(" ");
+    return tokens;
+    // userTokens = formatter.formatText(userText).split(" ");
   }
 
   double editDistance({
@@ -81,6 +77,11 @@ class LevenshtienAlg {
     required String originalText,
     required String userText,
   }) {
+    List<String> originalTokens = tokenize(text: originalText);
+    List<String> userTokens = tokenize(text: userText);
+    List<String> wrongWords = [];
+    int correctWords = 0;
+    String score = "";
     // try {
     //   validateArabicText(text: originalText);
     //   validateArabicText(text: userText);
@@ -88,8 +89,6 @@ class LevenshtienAlg {
     //   rethrow;
     // }
 
-    tokenize(originalText: originalText, userText: userText);
-    wrongWords = [];
     int n = originalTokens.length;
     int m = userTokens.length;
 
@@ -161,7 +160,7 @@ class LevenshtienAlg {
     print(ops);
     print(dpMatrix);
     print(wrongWords);
-     score = "$correctWords/$n";
+    score = "$correctWords/$n";
     return ComparisonResultEntity(score: score, wrongWords: wrongWords);
   }
 }

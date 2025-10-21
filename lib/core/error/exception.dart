@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+//TODO: add network connection exception
 abstract class BaseException implements Exception {
   final String message;
   BaseException({required this.message});
