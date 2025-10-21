@@ -1,11 +1,10 @@
 import org.gradle.api.tasks.Delete
 import org.gradle.api.file.Directory
 
-// Kotlin version
-val kotlinVersion = String by project
 
 // Buildscript for Android Gradle Plugin + Kotlin plugin
 buildscript {
+    val kotlinVersion = "2.0.20"
     repositories {
         google()
         mavenCentral()
