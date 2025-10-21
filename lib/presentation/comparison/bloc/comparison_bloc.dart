@@ -10,12 +10,15 @@ part 'comparison_event.dart';
 part 'comparison_state.dart';
 
 class ComparisonBloc extends Bloc<ComparisonEvent, ComparisonState> {
-  ComparisonBloc()
-    : super(ComparisonInitial()) {
+  ComparisonBloc() : super(ComparisonInitial()) {
     on<ComparisonRequested>((event, emit) {
-  final CompareTextsUseCase compareTextsUseCase = CompareTextsUseCase(comparer: getIt.get<LevenshtienAlg>());
+      final CompareTextsUseCase compareTextsUseCase = CompareTextsUseCase(
+        comparer: getIt.get<LevenshtienAlg>(),
+      );
       emit(ComparisonLoading());
       try {
+        print('Comparing original: ${event.originalText.text}');
+        print('With user: ${event.userText.text}');
         final comparisonResult = compareTextsUseCase.call(
           originalText: event.originalText.text,
           userText: event.userText.text,

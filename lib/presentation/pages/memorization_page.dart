@@ -35,7 +35,7 @@ class _MemorizationPageState extends State<MemorizationPage> {
   bool isRecording = false;
   String? recordPath;
   TranscriptEntity originalText = TranscriptEntity(
-    text: "hello my name is susan.",
+    text: "i ate an apple.",
   );
 
   @override

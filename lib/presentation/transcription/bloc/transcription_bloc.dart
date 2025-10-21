@@ -12,6 +12,7 @@ class TranscriptionBloc extends Bloc<TranscriptionEvent, TranscriptionState> {
     : super(TranscriptionInitial()) {
     on<AudioRecorded>((event, emit) => emit(AudioRecording()));
     on<AudioUploaded>((event, emit) async {
+      // emit(TranscriptionInitial());
       emit(AudioUploading());
       try {
         final uploadResult = await transcriptRepo.uploadAudio(
@@ -50,8 +51,12 @@ class TranscriptionBloc extends Bloc<TranscriptionEvent, TranscriptionState> {
 
         transcriptResult.fold(
           (failure) => emit(TranscriptionError(message: failure.message)),
-          (transcriptEntity) =>
-              emit(TranscriptionReady(transcript: transcriptEntity)),
+          (transcriptEntity) {
+            print(
+              'Emitting TranscriptionReady with text: ${transcriptEntity.text}...',
+            );
+            emit(TranscriptionReady(transcript: transcriptEntity));
+          },
         );
       } catch (e, s) {
         debugPrint("TranscriptionBloc error: $e");

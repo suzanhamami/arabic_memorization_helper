@@ -13,7 +13,8 @@ class TranscriptionDataSource {
   final Dio dio;
   TranscriptionDataSource({required this.dio});
 
-  String apiKey = dotenv.env['API_KEY']!;
+  // String apiKey = dotenv.env['API_KEY']!;
+   static const String apiKey = String.fromEnvironment('API_KEY');
   //______________________________________________________________________________________
 
   Future<String> uploadAudio({required File audioFile}) async {
