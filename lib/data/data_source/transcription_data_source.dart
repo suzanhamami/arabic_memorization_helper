@@ -8,13 +8,14 @@ import 'package:internship_project/config/endpoints.dart';
 import 'package:internship_project/core/error/exception.dart';
 import 'package:internship_project/data/model/transcript_model.dart';
 import 'package:retry/retry.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class TranscriptionDataSource {
   final Dio dio;
   TranscriptionDataSource({required this.dio});
 
   // String apiKey = dotenv.env['API_KEY']!;
-   static const String apiKey = String.fromEnvironment('API_KEY');
+  static const String apiKey = String.fromEnvironment('API_KEY');
   //______________________________________________________________________________________
 
   Future<String> uploadAudio({required File audioFile}) async {
@@ -32,8 +33,16 @@ class TranscriptionDataSource {
       if (response.statusCode == 200) {
         return response.data["upload_url"];
       }
-      throw ServerException(message: "Uploading audio failed with non-200 status code.");
-    } catch (e) {
+      final serverException = ServerException(
+        message: "Uploading audio failed with non-200 status code.",
+      );
+      await Sentry.captureException(
+        serverException,
+        stackTrace: StackTrace.current,
+      );
+      throw serverException;
+    } catch (e, s) {
+      await Sentry.captureException(e, stackTrace: s);
       throw ServerException(message: "Uploading audio failed: ${e.toString()}");
     }
   }
@@ -55,18 +64,28 @@ class TranscriptionDataSource {
           "punctuate": false,
           "disfluencies": true,
           // "language_code": "ar",
-          "language_detection": true
+          "language_detection": true,
         },
       );
       print(response.data);
       if (response.statusCode == 200) {
         return response.data["id"];
       }
-      throw ServerException(message: "Transcribing failed with non-200 status code.");
+      final serverException = ServerException(
+        message: "Transcribing failed with non-200 status code.",
+      );
+      await Sentry.captureException(
+        serverException,
+        stackTrace: StackTrace.current,
+      );
+      throw serverException;
     } catch (e, s) {
       print("from transcribe request");
       print(s);
-      throw ServerException(message: "Transcribing audio failed: ${e.toString()}");
+      await Sentry.captureException(e, stackTrace: s);
+      throw ServerException(
+        message: "Transcribing audio failed: ${e.toString()}",
+      );
     }
   }
 
@@ -87,18 +106,31 @@ class TranscriptionDataSource {
           print(transcript);
           return transcript;
         } else if (status == "error") {
-          throw TranscribingFailedException(
+          final transcribingFailedException = TranscribingFailedException(
             message: response.data["error"] ?? "Unknown error",
           );
+          await Sentry.captureException(
+            transcribingFailedException,
+            stackTrace: StackTrace.current,
+          );
+          throw transcribingFailedException;
         }
-        throw TranscriptNotReadyException(
+        final transcriptNotReadyException = TranscriptNotReadyException(
           message: "Transcript is still processing",
         );
+        await Sentry.captureException(
+          transcriptNotReadyException,
+          stackTrace: StackTrace.current,
+        );
+        throw transcriptNotReadyException;
       }, retryIf: (e) => e is TranscriptNotReadyException);
     } catch (e, s) {
       print("from get transcript request");
       print(s);
-      throw ServerException(message: "Getting transcript failed: ${e.toString()}");
+      await Sentry.captureException(e, stackTrace: s);
+      throw ServerException(
+        message: "Getting transcript failed: ${e.toString()}",
+      );
     }
   }
 }

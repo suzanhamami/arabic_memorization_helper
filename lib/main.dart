@@ -9,8 +9,9 @@ import 'package:internship_project/presentation/pages/home_page.dart';
 import 'package:internship_project/presentation/pages/memorization_page.dart';
 import 'package:internship_project/presentation/transcription/bloc/transcription_bloc.dart';
 import 'package:internship_project/core/service_locator.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterError.onError = (details) {
   FlutterError.presentError(details);
@@ -23,13 +24,20 @@ PlatformDispatcher.instance.onError = (error, stack) {
   // await dotenv.load(fileName: '.env');
 
   await setUpLocator();
-  runApp(
-    // DevicePreview(
-    //   enabled: !kReleaseMode,
-    //   builder: (context) => MyApp(), // Wrap your app
-    // ),
-    MyApp()
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = 'https://5e56549d10d09d907cabf4e74417c7a2@o4510232514068480.ingest.de.sentry.io/4510232516100176';
+    },
+    // Init your App.
+    appRunner: () => runApp(MyApp()),
   );
+  // runApp(
+  //   // DevicePreview(
+  //   //   enabled: !kReleaseMode,
+  //   //   builder: (context) => MyApp(), // Wrap your app
+  //   // ),
+  //   MyApp()
+  // );
 }
 
 class MyApp extends StatelessWidget {

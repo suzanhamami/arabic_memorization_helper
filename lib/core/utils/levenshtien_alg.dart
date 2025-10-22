@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:internship_project/core/error/exception.dart';
 import 'package:internship_project/core/utils/text_formatting.dart';
 import 'package:internship_project/domain/entity/comparison_result_entity.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class WordEdit {
   final String type; // match, insert, delete, substitute
@@ -64,15 +65,21 @@ class LevenshtienAlg {
     return sim / maxLen;
   }
 
-  void validateArabicText({required String text}) {
+  void validateArabicText({required String text}) async{
     final RegExp arabicOnly = RegExp(r'^[\u0600-\u06FF\s]+$');
     if (!arabicOnly.hasMatch(text)) {
-      throw InvalidLanguageException(
+      final invalidLanguageException = InvalidLanguageException(
         message: "Text contains non-Arabic letters.",
       );
+      await Sentry.captureException(
+          invalidLanguageException,
+          stackTrace: StackTrace.current,
+        );
+      throw invalidLanguageException;
     }
   }
-  //TODO: add to wrongwords to ptint score, fix algorithm
+
+  //TODO: add to wrongwords to print score, fix algorithm
   ComparisonResultEntity compareText({
     required String originalText,
     required String userText,

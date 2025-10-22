@@ -18,7 +18,7 @@ class TranscriptionBloc extends Bloc<TranscriptionEvent, TranscriptionState> {
         final uploadResult = await transcriptRepo.uploadAudio(
           audioFile: event.file,
         );
-
+        //TODO: try to send an exception to sentry here and on line 39
         if (uploadResult.isLeft()) {
           final failure = uploadResult.swap().getOrElse(
             () => throw Exception(),

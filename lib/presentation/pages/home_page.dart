@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internship_project/core/resources/assets_manager.dart';
 import 'package:internship_project/presentation/pages/memorization_page.dart';
 import 'package:internship_project/presentation/widgets/chapter_item.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 final chapters = List.generate(20, (index) => 1);
 
@@ -134,7 +135,7 @@ class HomePage extends StatelessWidget {
           backgroundColor: WidgetStatePropertyAll(Color(0xFFF0FEAC)),
           minimumSize: WidgetStatePropertyAll(Size(186.w, 45.h)),
         ),
-        onPressed: () {},
+        onPressed: () async {await Sentry.captureException(Exception('Test Sentry setup'));},
         icon: Image.asset(
           AssetsManager.brainStorming,
           height: 33,
