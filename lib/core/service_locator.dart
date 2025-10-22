@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:internship_project/core/utils/levenshtien_alg.dart';
 import 'package:internship_project/core/utils/text_formatting.dart';
 import 'package:internship_project/domain/use_case/compare_texts.dart';
+import 'package:internship_project/core/network/network.dart';
 import 'package:internship_project/presentation/comparison/bloc/comparison_bloc.dart';
 import 'package:internship_project/presentation/transcription/bloc/transcription_bloc.dart';
 import 'package:internship_project/data/data_source/transcription_data_source.dart';
@@ -19,7 +21,7 @@ Future<void> setUpLocator() async {
   //repo:
   getIt.registerLazySingleton<TranscriptRepo>(
     () => TranscriptRepoImp(
-      transcriptionDataSource: getIt<TranscriptionDataSource>(),
+      transcriptionDataSource: getIt<TranscriptionDataSource>(), networkConnection: getIt<NetworkConnection>(),
     ),
   );
   //usecase :
@@ -31,7 +33,7 @@ Future<void> setUpLocator() async {
     () => TranscriptionBloc(transcriptRepo: getIt<TranscriptRepo>()),
   );
   getIt.registerFactory<ComparisonBloc>(
-    () => ComparisonBloc(),
+    () => ComparisonBloc(compareTextsUseCase: getIt<CompareTextsUseCase>()),
   );
   //textFormatter :
   getIt.registerLazySingleton<TextFormatting>(() => TextFormatting());
@@ -39,4 +41,6 @@ Future<void> setUpLocator() async {
   getIt.registerFactory<LevenshtienAlg>(
     () => LevenshtienAlg(formatter: getIt<TextFormatting>()),
   );
+
+  getIt.registerLazySingleton<NetworkConnection>(() => NetworkConnection(internetConnectionChecker: InternetConnection()),);
 }

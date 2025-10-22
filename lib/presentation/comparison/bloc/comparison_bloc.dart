@@ -10,7 +10,9 @@ part 'comparison_event.dart';
 part 'comparison_state.dart';
 
 class ComparisonBloc extends Bloc<ComparisonEvent, ComparisonState> {
-  ComparisonBloc() : super(ComparisonInitial()) {
+  final CompareTextsUseCase compareTextsUseCase;
+  ComparisonBloc({required this.compareTextsUseCase})
+    : super(ComparisonInitial()) {
     on<ComparisonRequested>((event, emit) {
       final CompareTextsUseCase compareTextsUseCase = CompareTextsUseCase(
         comparer: getIt.get<LevenshtienAlg>(),

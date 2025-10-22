@@ -5,6 +5,10 @@ abstract class BaseException implements Exception {
   BaseException({required this.message});
 }
 
+class NetworkException extends BaseException{
+  NetworkException({required super.message});
+}
+
 class ServerException extends BaseException {
   ServerException({required super.message});
 }

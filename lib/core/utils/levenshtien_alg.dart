@@ -72,7 +72,7 @@ class LevenshtienAlg {
       );
     }
   }
-
+  //TODO: add to wrongwords to ptint score, fix algorithm
   ComparisonResultEntity compareText({
     required String originalText,
     required String userText,
