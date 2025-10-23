@@ -12,7 +12,6 @@ class TranscriptionBloc extends Bloc<TranscriptionEvent, TranscriptionState> {
     : super(TranscriptionInitial()) {
     on<AudioRecorded>((event, emit) => emit(AudioRecording()));
     on<AudioUploaded>((event, emit) async {
-      // emit(TranscriptionInitial());
       emit(AudioUploading());
       try {
         final uploadResult = await transcriptRepo.uploadAudio(
@@ -66,46 +65,3 @@ class TranscriptionBloc extends Bloc<TranscriptionEvent, TranscriptionState> {
     });
   }
 }
-    //   try {
-    //     final uploadResult = await transcriptRepo.uploadAudio(
-    //       audioFile: event.file,
-    //     );
-    //     uploadResult.fold(
-    //       (failure) => emit(TranscriptionError(message: failure.message)),
-    //       (uploadUrl) async {
-    //         emit(AudioUploadedSuccessfully(response: uploadUrl));
-    //         try {
-    //           final transcribeResult = await transcriptRepo.transcribeAudio(
-    //             uploadUrl: uploadUrl,
-    //           );
-    //           transcribeResult.fold(
-    //             (failure) => emit(TranscriptionError(message: failure.message)),
-    //             (transcriptId) async {
-    //               emit(TranscriptionLoading(transcriptId: transcriptId));
-    //               try {
-    //                 final transcriptResult = await transcriptRepo.getTranscript(
-    //                   transcriptId: transcriptId,
-    //                 );
-    //                 transcriptResult.fold(
-    //                   (failure) =>
-    //                       emit(TranscriptionError(message: failure.message)),
-    //                   (transcriptEntity) {
-    //                     emit(TranscriptionReady(transcript: transcriptEntity));
-    //                   },
-    //                 );
-    //               } catch (e) {
-    //                 emit(TranscriptionError(message: 'Failed to get transcript: ${e.toString()}'));
-    //               }
-    //             },
-    //           );
-    //         } catch (e) {
-    //           emit(TranscriptionError(message: 'Failed to transcribe audio: ${e.toString()}'));
-    //         }
-    //       },
-    //     );
-    //   } catch (e, s) {
-    //     debugPrint("TranscriptionBloc error: $e");
-    //     debugPrint("Stack trace: $s");
-    //     emit(TranscriptionError(message:"Failed to upload audio: ${e.toString()}"));
-    //   }
-    //  });

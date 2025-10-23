@@ -3,12 +3,13 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internship_project/core/resources/assets_manager.dart';
+import 'package:internship_project/core/resources/colors_manager.dart';
 import 'package:internship_project/presentation/pages/home_page.dart';
 
-class ChapterItemLeft extends StatelessWidget {
+class LessonItemLeft extends StatelessWidget {
   bool isDone;
   bool isLocked;
-  ChapterItemLeft({Key? key, required this.isDone, required this.isLocked})
+  LessonItemLeft({Key? key, required this.isDone, required this.isLocked})
     : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -19,17 +20,17 @@ class ChapterItemLeft extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           LeftArrow(),
-          AvatarTemp(isDone: isDone),
+          AvatarTemp(isDone: isDone, isLocked: isLocked),
         ],
       ),
     );
   }
 }
 
-class ChapterItemRight extends StatelessWidget {
+class LessonItemRight extends StatelessWidget {
   bool isDone;
   bool isLocked;
-  ChapterItemRight({Key? key, required this.isDone, required this.isLocked})
+  LessonItemRight({Key? key, required this.isDone, required this.isLocked})
     : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -42,12 +43,13 @@ class ChapterItemRight extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           RightArrow(),
-          AvatarTemp(isDone: isDone),
+          AvatarTemp(isDone: isDone, isLocked: isLocked),
         ],
       ),
     );
   }
 }
+
 class RightArrow extends StatelessWidget {
   const RightArrow({super.key});
   @override
@@ -58,7 +60,7 @@ class RightArrow extends StatelessWidget {
         angle: math.pi,
         child: Icon(
           Icons.play_arrow_rounded,
-          color: Color(0xFFDAE3AC),
+          color: ColorsManager.chapterItemColor,
           size: 28,
         ),
       ),
@@ -72,30 +74,37 @@ class LeftArrow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned(
       left: 32.w,
-      child: Icon(Icons.play_arrow_rounded, color: Color(0xFFDAE3AC), size: 28),
+      child: Icon(
+        Icons.play_arrow_rounded,
+        color: ColorsManager.chapterItemColor,
+        size: 28,
+      ),
     );
   }
 }
 
 class AvatarTemp extends StatelessWidget {
-  const AvatarTemp({super.key, required this.isDone});
+  const AvatarTemp({super.key, required this.isDone, required this.isLocked});
 
   final bool isDone;
+  final bool isLocked;
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      backgroundColor: Color(0xFFDAE3AC),
+      backgroundColor: ColorsManager.chapterItemColor,
       radius: 25.r,
       child: CircleAvatar(
         radius: 21.r,
         backgroundImage: AssetImage(AssetsManager.chapter1),
-        child: !isDone
+        child: isDone
+            ? Image.asset(AssetsManager.correctIcon, width: 21.w, height: 21.h)
+            : isLocked
             ? Container(
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color.fromRGBO(255, 255, 255, 0.5),
+                  color: ColorsManager.halfWhite,
                 ),
                 child: SizedBox(
                   height: 21.h,
@@ -103,7 +112,7 @@ class AvatarTemp extends StatelessWidget {
                   child: Image.asset(AssetsManager.lockIcon),
                 ),
               )
-            : Image.asset(AssetsManager.correctIcon, width: 21.w, height: 21.h),
+            : null,
       ),
     );
   }

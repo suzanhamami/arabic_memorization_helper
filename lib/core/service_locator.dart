@@ -14,26 +14,21 @@ import 'package:internship_project/domain/repository/transcript_repo.dart';
 GetIt getIt = GetIt.instance;
 Future<void> setUpLocator() async {
   getIt.registerLazySingleton<Dio>(() => Dio());
+  //networkChecker :
+  getIt.registerLazySingleton<NetworkConnection>(() => NetworkConnection(internetConnectionChecker: InternetConnection()),);
   //service :
   getIt.registerLazySingleton<TranscriptionDataSource>(
     () => TranscriptionDataSource(dio: getIt<Dio>()),
   );
-  //repo:
+  //repo :
   getIt.registerLazySingleton<TranscriptRepo>(
     () => TranscriptRepoImp(
       transcriptionDataSource: getIt<TranscriptionDataSource>(), networkConnection: getIt<NetworkConnection>(),
     ),
   );
-  //usecase :
-  getIt.registerFactory<CompareTextsUseCase>(
-    () => CompareTextsUseCase(comparer: getIt<LevenshtienAlg>()),
-  );
-  //bloc :
+  //transcriptBloc :
   getIt.registerFactory<TranscriptionBloc>(
     () => TranscriptionBloc(transcriptRepo: getIt<TranscriptRepo>()),
-  );
-  getIt.registerFactory<ComparisonBloc>(
-    () => ComparisonBloc(compareTextsUseCase: getIt<CompareTextsUseCase>()),
   );
   //textFormatter :
   getIt.registerLazySingleton<TextFormatting>(() => TextFormatting());
@@ -41,6 +36,12 @@ Future<void> setUpLocator() async {
   getIt.registerFactory<LevenshtienAlg>(
     () => LevenshtienAlg(formatter: getIt<TextFormatting>()),
   );
-
-  getIt.registerLazySingleton<NetworkConnection>(() => NetworkConnection(internetConnectionChecker: InternetConnection()),);
+  //usecase :
+  getIt.registerFactory<CompareTextsUseCase>(
+    () => CompareTextsUseCase(comparer: getIt<LevenshtienAlg>()),
+  );
+  //comparisonBloc :
+  getIt.registerFactory<ComparisonBloc>(
+    () => ComparisonBloc(compareTextsUseCase: getIt<CompareTextsUseCase>()),
+  );
 }

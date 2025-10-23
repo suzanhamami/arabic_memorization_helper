@@ -1,7 +1,5 @@
 class AssetsManager {
   static const String baseAssetImage = "assets/images";
-  static const String isolationMode = "$baseAssetImage/Isolation_Mode.png";
-  static const String group2 = "$baseAssetImage/Group 2.png";
   static const String chapter1 = "$baseAssetImage/chapter_1.jpg";
   static const String correctIcon = "$baseAssetImage/correct_icon.png";
   static const String lockIcon = "$baseAssetImage/lock_icon.png";

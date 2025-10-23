@@ -79,7 +79,7 @@ class LevenshtienAlg {
     }
   }
 
-  //TODO: add to wrongwords to print score, fix algorithm
+  //TODO: fix algorithm
   ComparisonResultEntity compareText({
     required String originalText,
     required String userText,
@@ -143,14 +143,16 @@ class LevenshtienAlg {
                   to: userTokens[j - 1],
                 ),
               );
+              wrongWords.add(originalTokens[i - 1]);
             } else {
-              // choose deletion or insertion depending on smaller dp
               if (dpMatrix[i - 1][j] <= dpMatrix[i][j - 1]) {
                 ops.add(WordEdit(type: "delete", from: originalTokens[i - 1]));
+                wrongWords.add(originalTokens[i - 1]);
                 i--;
                 continue;
               } else {
                 ops.add(WordEdit(type: "insert", to: userTokens[j - 1]));
+                wrongWords.add(userTokens[j - 1]);
                 j--;
                 continue;
               }
@@ -165,6 +167,7 @@ class LevenshtienAlg {
       // only i left → deletion
       if (i > 0 && (j == 0 || dpMatrix[i][j] == dpMatrix[i - 1][j] + 1)) {
         ops.add(WordEdit(type: "delete", from: originalTokens[i - 1]));
+        wrongWords.add(originalTokens[i - 1]);
         i--;
         continue;
       }
@@ -172,77 +175,11 @@ class LevenshtienAlg {
       // only j left → insertion
       if (j > 0 && (i == 0 || dpMatrix[i][j] == dpMatrix[i][j - 1] + 1)) {
         ops.add(WordEdit(type: "insert", to: userTokens[j - 1]));
+        wrongWords.add(userTokens[j - 1]);
         j--;
         continue;
       }
     }
-    // while (i > 0 || j > 0) {
-    //   // int current = dpMatrix[i][j];
-    //   // int sub = dpMatrix[i - 1][j - 1] + 1;
-    //   // int del = dpMatrix[i - 1][j] + 1;
-    //   // int ins = dpMatrix[i][j - 1] + 1;
-    //   if (i > 0 && j > 0 && originalTokens[i - 1] == userTokens[j - 1]) {
-    //     ops.add(WordEdit(type: "match", from: originalTokens[i - 1]));
-    //     correctWords++;
-    //     i--;
-    //     j--;
-    //   } else if (i > 0 &&
-    //       j > 0 &&
-    //       dpMatrix[i][j] == dpMatrix[i - 1][j - 1] + 1) {
-    //     // Possible substitution, but let's verify similarity
-    //     double similarity = editDistance(
-    //       originalText: originalTokens[i - 1],
-    //       userText: userTokens[j - 1],
-    //     );
-    //     if (similarity >= 0.6) {
-    //       ops.add(
-    //         WordEdit(
-    //           type: "substitute",
-    //           from: originalTokens[i - 1],
-    //           to: userTokens[j - 1],
-    //         ),
-    //       );
-    //       wrongWords.add(originalTokens[i - 1]);
-    //       i--;
-    //       j--;
-    //     } else if (dpMatrix[i][j] == dpMatrix[i - 1][j] + 1) {
-    //       // delete from original
-    //       ops.add(WordEdit(type: "delete", from: originalTokens[i - 1]));
-    //       wrongWords.add(originalTokens[i - 1]);
-    //       i--;
-    //     }
-    //   } else if (dpMatrix[i][j] == dpMatrix[i][j - 1] + 1) {
-    //     // insert from user
-    //     ops.add(WordEdit(type: "insert", to: userTokens[j - 1]));
-    //     wrongWords.add(userTokens[j - 1]);
-    //     j--;
-    //   } else if (j > 0 &&
-    //       (i == 0 || (i > 0 && dpMatrix[i][j - 1] <= dpMatrix[i - 1][j]))) {
-    //     ops.add(WordEdit(type: "insert", to: userTokens[j - 1]));
-    //     wrongWords.add(userTokens[j - 1]);
-    //     j--;
-    //   } else if (i > 0) {
-    //     ops.add(WordEdit(type: "delete", from: originalTokens[i - 1]));
-    //     wrongWords.add(originalTokens[i - 1]);
-    //     i--;
-    //   } else {
-    //     print('⚠️ Fallback triggered at i=$i, j=$j → forcing step');
-    //     i--;
-    //     j--;
-    //   }
-    // }
-    // Handle remaining leading tokens (unmatched prefixes)
-    // while (i > 0) {
-    //   ops.add(WordEdit(type: "delete", from: originalTokens[i - 1]));
-    //   wrongWords.add(originalTokens[i - 1]);
-    //   i--;
-    // }
-
-    // while (j > 0) {
-    //   ops.add(WordEdit(type: "insert", to: userTokens[j - 1]));
-    //   wrongWords.add(userTokens[j - 1]);
-    //   j--;
-    // }
     wrongWords = wrongWords.reversed.toList();
     print(ops);
     print(dpMatrix);
@@ -251,35 +188,3 @@ class LevenshtienAlg {
     return ComparisonResultEntity(score: score, wrongWords: wrongWords);
   }
 }
-// while (i > 0 || j > 0) {
-    //   int current = dpMatrix[i][j];
-    //   int sub = dpMatrix[i - 1][j - 1] + 1;
-    //   int del = dpMatrix[i - 1][j] + 1;
-    //   int ins = dpMatrix[i][j - 1] + 1;
-    //   if (i > 0 && j > 0 && originalTokens[i - 1] == userTokens[j - 1]) {
-    //     ops.add(WordEdit(type: "match", from: originalTokens[i - 1]));
-
-    //     correctWords++;
-    //     i--;
-    //     j--;
-    //   } else if (j > 0 && current == ins) {
-    //     ops.add(WordEdit(type: "insert", to: userTokens[j - 1]));
-    //     wrongWords.add(userTokens[j - 1]);
-    //     j--;
-    //   } else if (i > 0 && j > 0 && current == sub) {
-    //     ops.add(
-    //       WordEdit(
-    //         type: "substitute",
-    //         from: originalTokens[i - 1],
-    //         to: userTokens[j - 1],
-    //       ),
-    //     );
-    //     wrongWords.add(originalTokens[i - 1]);
-    //     i--;
-    //     j--;
-    //   } else if (i > 0 && current == del) {
-    //     ops.add(WordEdit(type: "delete", from: originalTokens[i - 1]));
-    //     wrongWords.add(originalTokens[i - 1]);
-    //     i--;
-    //   }
-    // }
